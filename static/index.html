@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentTracker - Management System</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth Section -->
+        <div id="auth-section" class="section">
+            <div class="auth-container">
+                <div class="auth-box">
+                    <h1>StudentTracker</h1>
+                    <div class="auth-tabs">
+                        <button class="tab-button active" onclick="switchTab('login')">Login</button>
+                        <button class="tab-button" onclick="switchTab('register')">Register</button>
+                    </div>
+                    
+                    <!-- Login Form -->
+                    <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <div id="login-error" class="error-message"></div>
+                    </form>
+                    
+                    <!-- Register Form -->
+                    <form id="register-form" class="auth-form" onsubmit="handleRegister(event)">
+                        <div class="form-group">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-first-name">First Name</label>
+                            <input type="text" id="register-first-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-last-name">Last Name</label>
+                            <input type="text" id="register-last-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">Password</label>
+                            <input type="password" id="register-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-role">Role</label>
+                            <select id="register-role" required onchange="updateRegisterFields()">
+                                <option value="">Select Role</option>
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                            </select>
+                        </div>
+                        <div id="register-role-fields"></div>
+                        <button type="submit" class="btn btn-primary">Register</button>
+                        <div id="register-error" class="error-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="section hidden">
+            <nav class="navbar">
+                <div class="nav-brand">StudentTracker</div>
+                <div class="nav-menu">
+                    <button class="nav-item" onclick="showSection('dashboard')">Dashboard</button>
+                    <button class="nav-item" id="nav-admin" class="hidden" onclick="showSection('admin')">Admin</button>
+                    <button class="nav-item" id="nav-courses" onclick="showSection('courses')">Courses</button>
+                    <button class="nav-item" id="nav-attendance" class="hidden" onclick="showSection('attendance')">Attendance</button>
+                    <button class="nav-item" id="nav-students" class="hidden" onclick="showSection('students')">Students</button>
+                    <button class="nav-item" id="nav-teachers" class="hidden" onclick="showSection('teachers')">Teachers</button>
+                    <button class="nav-item" id="profile-btn" onclick="showSection('profile')">Profile</button>
+                    <button class="nav-item" onclick="handleLogout()">Logout</button>
+                </div>
+            </nav>
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="content-section">
+                <h1>Dashboard</h1>
+                <div id="user-greeting" class="greeting"></div>
+                <div id="dashboard-stats" class="stats-grid"></div>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="profile-view" class="content-section hidden">
+                <h1>My Profile</h1>
+                <div id="profile-info" class="profile-card"></div>
+            </div>
+
+            <!-- Admin Section -->
+            <div id="admin-view" class="content-section hidden">
+                <h1>Admin Panel</h1>
+                <div class="admin-tabs">
+                    <button class="tab-button active" onclick="switchAdminTab('admin-users')">Users</button>
+                    <button class="tab-button" onclick="switchAdminTab('admin-students')">Students</button>
+                    <button class="tab-button" onclick="switchAdminTab('admin-teachers')">Teachers</button>
+                </div>
+
+                <!-- Users Management -->
+                <div id="admin-users" class="admin-panel active">
+                    <h2>Manage Users</h2>
+                    <div class="controls">
+                        <input type="text" id="user-search" placeholder="Search users..." onkeyup="searchUsers()">
+                        <button class="btn btn-success" onclick="showUserModal()">Add User</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table"></tbody>
+                    </table>
+                </div>
+
+                <!-- Students Management -->
+                <div id="admin-students" class="admin-panel hidden">
+                    <h2>Manage Students</h2>
+                    <div class="controls">
+                        <input type="text" id="student-search" placeholder="Search students..." onkeyup="searchStudents()">
+                        <button class="btn btn-success" onclick="showStudentModal()">Add Student</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Roll Number</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table"></tbody>
+                    </table>
+                </div>
+
+                <!-- Teachers Management -->
+                <div id="admin-teachers" class="admin-panel hidden">
+                    <h2>Manage Teachers</h2>
+                    <div class="controls">
+                        <input type="text" id="teacher-search" placeholder="Search teachers..." onkeyup="searchTeachers()">
+                        <button class="btn btn-success" onclick="showTeacherModal()">Add Teacher</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Specialization</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachers-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Courses Section -->
+            <div id="courses-view" class="content-section hidden">
+                <h1>Courses</h1>
+                <div class="controls">
+                    <input type="text" id="course-search" placeholder="Search courses..." onkeyup="searchCourses()">
+                    <button class="btn btn-success" id="add-course-btn" onclick="showCourseModal()" class="hidden">Add Course</button>
+                </div>
+                <div id="courses-grid" class="courses-grid"></div>
+            </div>
+
+            <!-- Attendance Section -->
+            <div id="attendance-view" class="content-section hidden">
+                <h1>Attendance Management</h1>
+                <div class="controls">
+                    <div class="form-group">
+                        <label for="attendance-course">Select Course</label>
+                        <select id="attendance-course" onchange="loadCourseAttendance()">
+                            <option value="">-- Select Course --</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="showAttendanceForm()">Mark Attendance</button>
+                </div>
+                <div id="attendance-summary"></div>
+            </div>
+
+            <!-- Students View (for viewing enrolled students) -->
+            <div id="students-view" class="content-section hidden">
+                <h1>My Courses</h1>
+                <div id="enrolled-courses" class="courses-grid"></div>
+            </div>
+
+            <!-- Teachers View -->
+            <div id="teachers-view" class="content-section hidden">
+                <h1>My Courses</h1>
+                <div id="taught-courses" class="courses-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-backdrop" class="modal-backdrop hidden" onclick="closeModal()"></div>
+    
+    <div id="modal-container" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="/api.js"></script>
+    <script src="/app.js"></script>
+</body>
+</html>

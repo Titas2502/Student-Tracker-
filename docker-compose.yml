@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: studenttracker-db
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: YourPassword123!
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - studenttracker-net
+
+  api:
+    build: .
+    container_name: studenttracker-api
+    environment:
+      FLASK_ENV: development
+      DEBUG: "True"
+      DB_SERVER: db
+      DB_NAME: StudentTrackerDB
+      DB_USER: sa
+      DB_PASSWORD: YourPassword123!
+      JWT_SECRET_KEY: dev-secret-key-change-in-production
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    networks:
+      - studenttracker-net
+    command: gunicorn --bind 0.0.0.0:8000 --workers 2 --timeout 60 app:app
+
+volumes:
+  sqlserver_data:
+
+networks:
+  studenttracker-net:
+    driver: bridge

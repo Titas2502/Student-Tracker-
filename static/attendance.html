@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Attendance Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/attendance.js" defer></script>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:20px}
+    .container{max-width:980px;margin:0 auto}
+    .grid{display:flex;gap:20px}
+    .box{flex:1;padding:12px;border:1px solid #ddd;border-radius:6px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #eee}
+    .btn{padding:8px 12px;border-radius:4px;border:0;background:#2c7be5;color:#fff;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Attendance Tracker</h1>
+    <div class="grid">
+      <div class="box">
+        <h3>Mark Today's Attendance</h3>
+        <label>Course: <input id="courseSearch" type="text" placeholder="search course" /></label>
+        <select id="courseSelect" style="width:100%;margin-top:8px"></select>
+        <label style="display:block;margin-top:8px">Date: <input id="attendanceDate" type="date" /></label>
+        <button id="loadCourse" class="btn" style="margin-top:8px">Load Students</button>
+        <form id="attendanceForm">
+          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <label>Page size: <select id="pageSize"><option>10</option><option>20</option><option>50</option></select></label>
+            </div>
+            <div>
+              <button id="prevPage" class="btn">Prev</button>
+              <span id="pageInfo" style="margin:0 8px">Page 1</span>
+              <button id="nextPage" class="btn">Next</button>
+            </div>
+          </div>
+          <table id="studentsTable">
+            <thead><tr><th>Roll</th><th>Name</th><th>Status</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <button type="submit" class="btn" style="margin-top:10px">Submit Attendance</button>
+        </form>
+      </div>
+      <div class="box">
+        <h3>Student Monthly Histogram</h3>
+        <label>Student ID: <input id="studentId" type="text" placeholder="student id" /></label>
+        <label>Year: <input id="year" type="number" min="2000" value="2025" style="width:100px"/></label>
+        <label>Month: <input id="month" type="number" min="1" max="12" value="12" style="width:80px"/></label>
+        <button id="loadChart" class="btn">Load Chart</button>
+        <canvas id="attendanceChart" style="max-width:100%;margin-top:12px"></canvas>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
